@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"sort"
+	"strconv"
 	"strings"
 )
 
+//Sort by length code
 type ByLength []string
 
 func (s ByLength) Len() int {
@@ -43,6 +45,10 @@ func isFriendly(string1, string2 string) bool {
 			if val != string2[i] {
 				return false
 			}
+		} else if val, exists := currentMap[string2[i]]; exists {
+			if val != string1[i] {
+				return false
+			}
 		} else {
 			currentMap[string1[i]] = string2[i]
 			currentMap[string2[i]] = string1[i]
@@ -51,15 +57,24 @@ func isFriendly(string1, string2 string) bool {
 	return true
 }
 
-//Returns the friendly number for
+//Returns the count of words with at least 1 friend
 func friendlyCountof(wordList []string) int {
 	c := 0
-	max := len(wordList) - 1
+	max := len(wordList)
+	m := map[int]int{}
 	for i := 0; i < max; i++ {
-		w := wordList[0]
-		wordList = append(wordList[:0], wordList[1:]...)
-		for j := 0; j < len(wordList); j++ {
+		w := wordList[i]
+		if _, exists := m[i]; exists {
+			c++
+			continue
+		}
+		for j := 0; j < max; j++ {
+			if i == j {
+				continue
+			}
 			if isFriendly(w, wordList[j]) {
+				m[i] = j
+				m[j] = i
 				c++
 				break
 			}
@@ -68,6 +83,7 @@ func friendlyCountof(wordList []string) int {
 	return c
 }
 
+//Groups strings into slices where all the strings are of same length
 func groupWords(wordList []string) [][]string {
 	sort.Sort(ByLength(wordList))
 	var gs [][]string
@@ -85,9 +101,9 @@ func groupWords(wordList []string) [][]string {
 	return gs
 }
 
+//Returns the same result of friendlyCountOf, but uses goroutines and channels to divide the work concurrently
 func threadedFriendlyCountOf(wordList []string) int {
 	g := groupWords(wordList)
-	fmt.Println(g)
 	var c []chan int
 	for i := 0; i < len(g); i++ {
 		c = append(c, make(chan int))
@@ -104,27 +120,125 @@ func threadedFriendlyCountOf(wordList []string) int {
 	return count
 }
 
-func main() {
+func testIsFriendly() bool {
+	fmt.Println("Testing Friendly Func")
+	count := 1
+	if isFriendly("GAGA", "BOBO") != true {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //2
+	if isFriendly("HHHH", "BOBO") != false {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //3
+	if isFriendly("HHHH", "HHHH") != true {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //4
+	if isFriendly("HHHH", "aeoifnaoienf") != false {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //5
+	if isFriendly("JKKJJ", "JKKJ") != false {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //6
+	if isFriendly("ABCE", "EFGH") != false {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //7
+	if isFriendly("ABCE", "EFGA") != true {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //8
+	if isFriendly("", "") != false {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //9
+	if isFriendly("", "d") != false {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //10
+	if isFriendly("d", "") != false {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	count++ //11
+	if isFriendly("EGONUH", "LALALA") != false {
+		fmt.Println("Failed Case " + strconv.Itoa(count))
+		return false
+	}
+	fmt.Println("Testing Success")
+	return true
+}
+
+func testGroupWords() bool {
 	p := []string{"LALALA", "XOXOXO", "GCGCGC", "HHHCCC", "BBBMMM", "EGONUH", "HHRGOE", "XOXO", "JUJU", "JKKK", "J", "", ""}
-	fmt.Println(p)
-	fmt.Println(isFriendly("GAGA", "BOBO"))    //true
-	fmt.Println(isFriendly("HHHH", "BOBO"))    //false
-	fmt.Println(isFriendly("HHHH", "HHHH"))    //true
-	fmt.Println(isFriendly("HHHH", "oaeinfa")) //false
-	fmt.Println(isFriendly("JKKJJ", "JKKJ"))   //false
-	fmt.Println(isFriendly("ABCE", "EFGH"))    //false
-	fmt.Println(isFriendly("ABCE", "EFGA"))    //true
-	fmt.Println(isFriendly("", ""))            //false
-	fmt.Println(isFriendly("", "d"))           //false
-	fmt.Println(isFriendly("d", ""))           //false
+	r := [][]string{[]string{"", ""}, []string{"J"}, []string{"XOXO", "JUJU", "JKKK"}, []string{"LALALA", "XOXOXO", "GCGCGC", "HHHCCC", "BBBMMM", "EGONUH", "HHRGOE"}}
 	gp := groupWords(p)
-	fmt.Println(gp)
-	fmt.Println(threadedFriendlyCountOf(p))
+	fmt.Println("Testing groupWords")
+	for i := 0; i < len(gp); i++ {
+		for j := 0; j < len(gp[i]); j++ {
+			sort.Strings(gp[i])
+			sort.Strings(r[i])
+			if gp[i][j] != r[i][j] {
+				fmt.Println("Failed on " + gp[i][j] + " " + r[i][j])
+				fmt.Println(gp)
+				fmt.Println(r)
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func testFriendlyCountOf() bool {
+	bob := []string{"LALALA", "XOXOXO", "GCGCGC", "HHHCCC", "BBBMMM", "EGONUH", "HHRGOE", "XOXO", "JUJU", "JKKK", "J", "", ""}
+	fmt.Println("Testing FriendlyCount Function")
+	v := friendlyCountof(bob)
+	if v == 7 {
+		return true
+	}
+	fmt.Println(bob)
+	fmt.Print("Failed: Value was ")
+	fmt.Print(v)
+	fmt.Println("")
+	return false
+}
+
+func testThreadedFriendlyCountOf() bool {
+	p := []string{"LALALA", "XOXOXO", "GCGCGC", "HHHCCC", "BBBMMM", "EGONUH", "HHRGOE", "XOXO", "JUJU", "JKKK", "J", "", ""}
+	fmt.Println("Testing Threading")
+	v := threadedFriendlyCountOf(p)
+	if v == 7 {
+		return true
+	}
+	fmt.Print("Threading: was ")
+	fmt.Print(v)
+	fmt.Println("")
+	return false
+}
+
+func main() {
+	fmt.Println(testGroupWords())
+	fmt.Println(testIsFriendly())
+	fmt.Println(testThreadedFriendlyCountOf())
+	fmt.Println(testFriendlyCountOf())
+	//*
 	f, err := ioutil.ReadFile("words.txt")
 	if err != nil {
 		fmt.Println(err)
 	}
 	wl := strings.Split(string(f), "\n")
-	fmt.Println(len(wl))
 	fmt.Println(threadedFriendlyCountOf(wl))
+	// */
 }

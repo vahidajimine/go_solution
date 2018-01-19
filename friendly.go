@@ -182,12 +182,15 @@ func testIsFriendly() bool {
 }
 
 func testGroupWords() bool {
+	//Test case
 	p := []string{"LALALA", "XOXOXO", "GCGCGC", "HHHCCC", "BBBMMM", "EGONUH", "HHRGOE", "XOXO", "JUJU", "JKKK", "J", "", ""}
+	//Correct grouping
 	r := [][]string{[]string{"", ""}, []string{"J"}, []string{"XOXO", "JUJU", "JKKK"}, []string{"LALALA", "XOXOXO", "GCGCGC", "HHHCCC", "BBBMMM", "EGONUH", "HHRGOE"}}
 	gp := groupWords(p)
 	fmt.Println("Testing groupWords")
 	for i := 0; i < len(gp); i++ {
 		for j := 0; j < len(gp[i]); j++ {
+			//Order doesn't matter
 			sort.Strings(gp[i])
 			sort.Strings(r[i])
 			if gp[i][j] != r[i][j] {

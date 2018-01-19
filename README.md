@@ -2,7 +2,7 @@
 ## Description
 This a multi-threaded solution that I came up with while looking up how to do concurrency programming with go.
 
-##Problem
+## Challenge
 Two words are considered “friendly” if there exists a one to one mapping of letters between the two.
 
 For instance…
@@ -14,11 +14,17 @@ HHHH and BOBO are not friendly. Neither are JKKJ and JKKJJ.
 This list…
 
 LALALA
+
 XOXOXO
+
 GCGCGC
+
 HHHCCC
+
 BBBMMM
+
 EGONUH
+
 HHRGOE
 
 … contains 5 words that have at least one friend. How many words are there in "word.txt" with at least one friend?

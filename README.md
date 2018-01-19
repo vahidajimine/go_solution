@@ -21,4 +21,4 @@ This list…
 * EGONUH
 * HHRGOE
 
-… contains 5 words that have at least one friend. How many words are there in [word.txt](word.txt) with at least one friend?
+… contains 5 words that have at least one friend. How many words are there in [words.txt](words.txt) with at least one friend?

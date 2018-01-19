@@ -13,18 +13,12 @@ HHHH and BOBO are not friendly. Neither are JKKJ and JKKJJ.
 
 This list…
 
-LALALA
+* LALALA
+* XOXOXO
+* GCGCGC
+* HHHCCC
+* BBBMMM
+* EGONUH
+* HHRGOE
 
-XOXOXO
-
-GCGCGC
-
-HHHCCC
-
-BBBMMM
-
-EGONUH
-
-HHRGOE
-
-… contains 5 words that have at least one friend. How many words are there in "word.txt" with at least one friend?
+… contains 5 words that have at least one friend. How many words are there in [word.txt](word.txt) with at least one friend?

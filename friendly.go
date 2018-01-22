@@ -120,6 +120,15 @@ func threadedFriendlyCountOf(wordList []string) int {
 	return count
 }
 
+func fileFriendlyCountOf(fileName string) int {
+	f, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		fmt.Println(err)
+	}
+	wl := strings.Split(string(f), "\n")
+	return threadedFriendlyCountOf(wl)
+}
+
 func testIsFriendly() bool {
 	fmt.Println("Testing Friendly Func")
 	count := 1
@@ -231,17 +240,23 @@ func testThreadedFriendlyCountOf() bool {
 	return false
 }
 
+func testFileFriendlyCountOf() bool {
+	fmt.Println("Testing file read")
+	if v := fileFriendlyCountOf("test.txt"); v != 7 {
+		fmt.Println("File Count failed! Answer 7, got " + strconv.Itoa(v))
+		return false
+	}
+	fmt.Println("Success")
+	return true
+}
+
 func main() {
 	fmt.Println(testGroupWords())
 	fmt.Println(testIsFriendly())
 	fmt.Println(testThreadedFriendlyCountOf())
 	fmt.Println(testFriendlyCountOf())
+	fmt.Println(testFileFriendlyCountOf())
 	//*
-	f, err := ioutil.ReadFile("words.txt")
-	if err != nil {
-		fmt.Println(err)
-	}
-	wl := strings.Split(string(f), "\n")
-	fmt.Println(threadedFriendlyCountOf(wl))
+	fmt.Println(fileFriendlyCountOf("words.txt"))
 	// */
 }

@@ -22,3 +22,9 @@ This list…
 * HHRGOE
 
 … contains 5 words that have at least one friend. How many words are there in [words.txt](words.txt) with at least one friend?
+
+## Answer
+<details>
+  <summary><b>Spoilers</b></summary>
+  <p><i>2</i></p>
+</details>

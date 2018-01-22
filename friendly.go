@@ -257,6 +257,6 @@ func main() {
 	fmt.Println(testFriendlyCountOf())
 	fmt.Println(testFileFriendlyCountOf())
 	//*
-	fmt.Println(fileFriendlyCountOf("words.txt"))
+	fmt.Println("The amount of friendly words in \"words.txt\" is " + strconv.Itoa(fileFriendlyCountOf("words.txt")))
 	// */
 }
